@@ -27,15 +27,18 @@ public class MovieTheater {
 
     
 
-    public void buyTicket(int clientID) {
+    public void buyTicket(int clientID, int numOfTicketsToBuy) {
         lock.lock();
         try {
-            if (this.numOfTickets > 0) {
-                this.numOfTickets--;
-                System.out.println("A ticket was sold to client " + clientID);
-                System.out.println("Num of tickets: " + this.numOfTickets);
+            if ((this.numOfTickets - numOfTicketsToBuy) >= 0) {
+                this.numOfTickets -= numOfTicketsToBuy;
+                System.out.println(numOfTicketsToBuy + " ticket(s) was sold to client " + clientID);
+                System.out.println("Num of tickets: " + this.numOfTickets + "\n");
             }else{
-                System.out.println("No ticket avaliable");
+                System.out.println(clientID + " could not buy tickets anymore."
+                        + "\nNumber of tickets avaliable: " + this.numOfTickets +
+                        "\nNumber of tickets client " + clientID + " wanted to buy: " + numOfTicketsToBuy + "\n");
+                
             }
         } finally {
             lock.unlock();
