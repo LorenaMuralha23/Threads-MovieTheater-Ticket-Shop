@@ -8,23 +8,31 @@ import movieticketshoppingsimulator.BoxOffice;
 public class Client implements Runnable {
 
     private MovieTheater movieTheater;
-    private int numOfTicketsToBuy;
+    private Order order;
+    private String movieName;
 
-    public Client(MovieTheater MovieTheater, int numOfTicketsToBuy) {
+    public Client(MovieTheater MovieTheater, String movieName) {
         this.movieTheater = MovieTheater;
-        this.numOfTicketsToBuy = numOfTicketsToBuy;
+        this.movieName = movieName;
+        this.order = new Order();
     }
 
     @Override
     public void run() {
         try {
-            BoxOffice.SEMAPHORE.acquire();
-            sleep();
+
             int clientID = new Random().nextInt(1000);
-            System.out.println(Thread.currentThread().getName() + ": Buying ticket for " + clientID + "...");
-            this.movieTheater.buyTicket(clientID, numOfTicketsToBuy);
-            BoxOffice.SEMAPHORE.release();
-        } catch (InterruptedException ex) {
+            int numOfTicketsToBuy = new Random().nextInt(10) + 1;
+            this.order.setClientId(clientID);
+            this.order.setNumOfTicketsToBuy(numOfTicketsToBuy);
+
+            System.out.println(order.getClientId() + " is trying to buy tickets for...");
+//            sleep();
+
+            movieTheater.buyTicket(order, this.movieName);
+            sleep();
+            BoxOffice.clientsPanel.decrementNumber();
+        } catch (Exception ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -32,8 +40,7 @@ public class Client implements Runnable {
 
     public void sleep() {
         try {
-            int timeOfWait = new Random().nextInt(1000);
-            Thread.sleep(1000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             e.printStackTrace();
