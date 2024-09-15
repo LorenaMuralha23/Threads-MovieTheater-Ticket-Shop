@@ -35,7 +35,7 @@ ant -version
 It should print something like this in your terminal:
 
 ```bash
-Apache Ant(TM) version x.xx.xx compiled on August XX 20XX
+Apache Ant(TM) version x.xx.xx compiled on Month XX 20XX
 ```
 
 ## Installation 📥
