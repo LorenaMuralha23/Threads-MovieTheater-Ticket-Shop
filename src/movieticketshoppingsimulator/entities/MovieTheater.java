@@ -1,23 +1,15 @@
 package movieticketshoppingsimulator.entities;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import movieticketshoppingsimulator.BoxOffice;
-import static movieticketshoppingsimulator.BoxOffice.executor;
+import view.panels.TotalPanel;
 
 public class MovieTheater implements Runnable {
 
-//    private List<Ticket> tickets = new ArrayList<>();
     public Lock lock = new ReentrantLock();
 
     public HashMap<String, SalesChannel> salesChannelList = new HashMap<>();
@@ -45,25 +37,37 @@ public class MovieTheater implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("Fechando o caixa...");
-        sleep();
+        try {
+            BoxOffice.clientsPanel.finishingLine();
+            
+            sleep();
+            
+            TotalPanel totalPanel = new TotalPanel();
+            
+            double total = 0;
+            
+            total += this.salesChannelList.get("Rocky").getAmountOfMoney();
+            total += this.salesChannelList.get("The Goonies").getAmountOfMoney();
+            total += this.salesChannelList.get("Forrest Gump").getAmountOfMoney();
+            
+            totalPanel.setTotal(total);
+            
+            BoxOffice.updateFinalPanel(totalPanel);
+            
+            BoxOffice.executor.shutdown();
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            Logger.getLogger(MovieTheater.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
-        System.out.println("Ingressos sobrando para " + BoxOffice.salesChannel1.getMovieName() + ": " + BoxOffice.salesChannel1.getNumOfTickets());
-        System.out.println("Ingressos sobrando para " + BoxOffice.salesChannel2.getMovieName() + ": " + BoxOffice.salesChannel2.getNumOfTickets());
-        System.out.println("Ingressos sobrando para " + BoxOffice.salesChannel3.getMovieName() + ": " + BoxOffice.salesChannel3.getNumOfTickets());
-        
-        System.out.println("Dinheiro dos ingressos para " + BoxOffice.salesChannel1.getMovieName() + ": R$" + BoxOffice.salesChannel1.getResults().get(BoxOffice.salesChannel1.getMovieName()));
-        System.out.println("Dinheiro dos ingressos para " + BoxOffice.salesChannel2.getMovieName() + ": R$" + BoxOffice.salesChannel2.getResults().get(BoxOffice.salesChannel2.getMovieName()));
-        System.out.println("Dinheiro dos ingressos para " + BoxOffice.salesChannel3.getMovieName() + ": R$" + BoxOffice.salesChannel3.getResults().get(BoxOffice.salesChannel3.getMovieName()));
-
-        BoxOffice.executor.shutdown();
     }
 
     
     public void sleep(){
         try {
-            Thread.sleep(5000);
+            Thread.sleep(2000);
         } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
             Logger.getLogger(MovieTheater.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

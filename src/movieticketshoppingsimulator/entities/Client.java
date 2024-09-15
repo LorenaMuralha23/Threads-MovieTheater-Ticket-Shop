@@ -3,7 +3,7 @@ package movieticketshoppingsimulator.entities;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import movieticketshoppingsimulator.BoxOffice;
+import static movieticketshoppingsimulator.BoxOffice.clientsPanel;
 
 public class Client implements Runnable {
 
@@ -20,19 +20,17 @@ public class Client implements Runnable {
     @Override
     public void run() {
         try {
-
+            clientsPanel.incrementNumber();
             int clientID = new Random().nextInt(1000);
             int numOfTicketsToBuy = new Random().nextInt(10) + 1;
             this.order.setClientId(clientID);
             this.order.setNumOfTicketsToBuy(numOfTicketsToBuy);
 
-            System.out.println(order.getClientId() + " is trying to buy tickets for...");
-//            sleep();
-
             movieTheater.buyTicket(order, this.movieName);
-            sleep();
-            BoxOffice.clientsPanel.decrementNumber();
+           
+
         } catch (Exception ex) {
+            Thread.currentThread().interrupt();
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -40,7 +38,7 @@ public class Client implements Runnable {
 
     public void sleep() {
         try {
-            Thread.sleep(5000);
+            Thread.sleep(18000);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             e.printStackTrace();

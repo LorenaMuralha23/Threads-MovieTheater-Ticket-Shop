@@ -2,27 +2,33 @@ package view.panels;
 
 public class ClientsPanel extends javax.swing.JPanel {
 
-    
     int numberOfClientInLine;
-    
+
     public ClientsPanel() {
         initComponents();
         numberOfClientInLine = 0;
     }
-    
-    public void updateNumberOfClients(){
+
+    public void updateNumberOfClients() {
         String numberTxt = String.valueOf(numberOfClientInLine);
         this.clientNumber.setText(numberTxt);
     }
-    
-    public void incrementNumber(){
+
+    public void incrementNumber() {
         numberOfClientInLine++;
         updateNumberOfClients();
     }
-    
-    public void decrementNumber(){
+
+    public void decrementNumber() {
         numberOfClientInLine--;
         updateNumberOfClients();
+    }
+
+    public void finishingLine() throws InterruptedException {
+        while (numberOfClientInLine != 0) {
+            decrementNumber();
+            Thread.sleep(100);
+        }
     }
 
     /**
